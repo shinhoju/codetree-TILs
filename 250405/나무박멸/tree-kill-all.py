@@ -29,16 +29,14 @@ def delete(x, y):
             nx, ny = xx + dx[d], yy + dy[d]
             if not in_range(nx, ny):
                 break
-            # 벽이 있거나 나무가 없는 칸 만나면 끝
+            # 벽이 있거나 나무가 없는 칸 (제초제 있는 칸)
             if trees[nx][ny] == -1:
                 break
-            if trees[nx][ny] == 0:
+            if trees[nx][ny] == 0 or trees[nx][ny] <= -2:
                 del_list.append((nx, ny))
                 break
 
-            # 제초제 칸이면 무시
-            if not trees[nx][ny] < -1:
-                del_sum += trees[nx][ny]
+            del_sum += trees[nx][ny]
             del_list.append((nx, ny))
             xx, yy = nx, ny
     return del_list, del_sum
@@ -91,16 +89,18 @@ for _ in range(M):
                 if del_trees_sum < t_del_trees_sum:
                     del_trees = t_del_trees
                     del_trees_sum = t_del_trees_sum
+    if del_trees_sum == 0:
+        break
+
+    # [3-3] 제초제 뿌리기
+    for di, dj in del_trees:
+        trees[di][dj] = -2 * (C+1)
 
     # [3-2] 이전에 뿌린 제초제 수명 줄이기
     for i in range(N):
         for j in range(N):
             if trees[i][j] < -1:
                 trees[i][j] += 2
-
-    # [3-3] 제초제 뿌리기
-    for di, dj in del_trees:
-        trees[di][dj] = -2 * C
 
     # [4] 박멸한 나무 수
     result += del_trees_sum
