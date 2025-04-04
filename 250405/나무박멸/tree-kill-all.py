@@ -71,8 +71,9 @@ for _ in range(M):
                     ni, nj = i + dx[d], j + dy[d]
                     if in_range(ni, nj):
                         # 벽, 나무, 제초제 없음
-                        if trees[ni][nj] == 0:
-                            spread.append(d)
+                        if trees[ni][nj] == -1 or trees[ni][nj] >= 1 or trees[ni][nj] <= -2:
+                            continue
+                        spread.append(d)
                 # spread 방향 씨 뿌리기
                 for s in spread:
                     si, sj = i + dx[s], j + dy[s]
