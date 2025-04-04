@@ -92,15 +92,15 @@ for _ in range(M):
     if del_trees_sum == 0:
         break
 
-    # [3-3] 제초제 뿌리기
-    for di, dj in del_trees:
-        trees[di][dj] = -2 * (C+1)
-
     # [3-2] 이전에 뿌린 제초제 수명 줄이기
     for i in range(N):
         for j in range(N):
             if trees[i][j] < -1:
                 trees[i][j] += 2
+
+    # [3-3] 제초제 뿌리기
+    for di, dj in del_trees:
+        trees[di][dj] = -2 * C
 
     # [4] 박멸한 나무 수
     result += del_trees_sum
