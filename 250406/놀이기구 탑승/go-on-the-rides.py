@@ -47,7 +47,7 @@ for f_i, cur in enumerate(units):
     # [1] 좋아하는 친구의 수가 가장 많은 위치
     max_friends = 0
     max_empty = 0
-    max_x, max_y = 0, 0
+    max_x, max_y = 30, 30
     for i in range(N):
         for j in range(N):
             if arr[i][j] > 0:
@@ -63,6 +63,13 @@ for f_i, cur in enumerate(units):
                 if max_empty < temp_empty:
                     max_empty = temp_empty
                     max_x, max_y = i, j
+                elif max_empty == temp_empty:
+                    # 행 번호가 가장 작은 위치
+                    if max_y > j:
+                        max_x, max_y = i, j
+                    elif max_y == j:
+                        if max_x > i:
+                            max_x, max_y = i, j
     # arr 업데이트
     arr[max_x][max_y] = cur
 
