@@ -73,7 +73,7 @@ while True:
                     # 베이스 캠프와 편의점의 최단 거리 계산
                     # 한 번 쓴 베이스 캠프는 못 지나감
                     dist = bfs(i, j, ex, ey)
-                    if dist < min_dist:
+                    if dist != -1 and dist < min_dist:
                         min_dist = dist
                         units[t] = (i, j)
         n_arr[units[t][0]][units[t][1]] = 2
