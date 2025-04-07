@@ -46,9 +46,8 @@ while True:
             nx, ny = sx + dx, sy + dy
             # [2] 편의점 도착이면 움직일 수 없는 칸 됨 / units에서 삭제
             if (nx, ny) == (ex, ey):
-                arr[nx][ny] = 2
+                n_arr[nx][ny] = 2
                 del_lst.append(idx)
-                # units.pop(idx)
                 break
 
             # 0, 1 일 때 이동 가능
@@ -61,7 +60,10 @@ while True:
     for d_idx in del_lst:
         units.pop(d_idx)
 
+    arr = n_arr
+
     # [3] 1분에 한 명씩 M 명의 사람이 베이스 캠프로 들어감 / 편의점과 가장 가까운 곳 / 못지나감
+    n_arr = [a[:] for a in arr]
     if t <= M:
         ex, ey = stores[t]
         min_dist = 400
