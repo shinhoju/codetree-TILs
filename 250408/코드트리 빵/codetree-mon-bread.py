@@ -53,7 +53,7 @@ while True:
             # 0, 1 일 때 이동 가능
             if 0 <= arr[nx][ny] <= 1:
                 dist = bfs(nx, ny, ex, ey)
-                if dist < min_dist:
+                if dist != -1 and dist < min_dist:
                     min_dist = dist
                     units[idx] = (nx, ny)
 
