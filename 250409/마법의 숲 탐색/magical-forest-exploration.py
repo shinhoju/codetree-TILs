@@ -15,76 +15,6 @@ dy = [0, 1, 0, -1]
 arr = [[0] * (C+2) for _ in range(R+3)]
 
 
-def down(c):
-    r = 1
-    for mul in range(1, R+2):
-        nr = r + mul                        # 중앙 한 칸 내려옴
-        # 조건 확인: 아랫쪽 3칸 빈 칸인지 체크
-        # for dr, dc in ((1, -1), (1, 1), (1, 0)):
-        for dr, dc in ((0, -1), (0, 1), (1, 0)):
-            nnr, nnc = nr + dr, c + dc      # 아랫쪽 칸 좌표
-            if nnr > (R+2):     # 맨 마지막 행 / 아랫쪽 칸이 빈 칸이 아님 -> 중앙이 내려오면 안됨
-                return nr - 1, c
-
-            if arr[nnr][nnc] != 0:
-                return nr - 1, c
-    return -1                               # 예외 처리 필요
-
-
-def left(r, c, d):
-    # 골렘 위치 / 출구 방향
-    cur_r, cur_c, cur_d = r, c, d
-    for _ in range(C*2):
-        nc = cur_c - 1          # 중앙 왼쪽 이동
-        # 조건 확인: 왼쪽 3칸이 빈 칸인지 체크
-        for dr, dc in ((-1, 0), (0, -1), (1, 0)):
-            nnr, nnc = cur_r + dr, nc + dc
-            if nnc < 1:                 # 범위 벗어나면 더 이상 이동하면 안됨
-                return cur_r, cur_c, cur_d
-            if arr[nnr][nnc] != 0:      # 빈 칸이 아니면 가면 안됨
-                return cur_r, cur_c, cur_d
-
-        # 3 칸 모두 빈 칸인 경우 ) 아래로 한 칸 내리기
-        nr = cur_r + 1
-        for dr, dc in ((0, -1), (1, 0)):
-            nnr, nnc = nr + dr, nc + dc
-            if nnr > R + 2:
-                return cur_r, cur_c, cur_d
-            if arr[nnr][nnc] != 0:
-                return cur_r, cur_c, cur_d
-
-        # 2 칸 모두 빈 칸인 경우 ) 내려갈 수 있음 -> 중앙 내리기, 출구 회전
-        cur_r, cur_c, cur_d = nr, nc, (cur_d+3) % 4
-    return -1       # 예외 처리
-
-
-def right(r, c, d):
-    # 골렘 위치 / 출구 방향
-    cur_r, cur_c, cur_d = r, c, d
-    for _ in range(C*2):
-        nc = cur_c + 1          # 중앙 오른쪽 이동
-        # 조건 확인: 왼쪽 3칸이 빈 칸인지 체크
-        for dr, dc in ((1, 0), (0, 1), (-1, 0)):
-            nnr, nnc = cur_r + dr, nc + dc
-            if nnc > C:                 # 범위 벗어나면 더 이상 이동하면 안됨
-                return cur_r, cur_c, cur_d
-            if arr[nnr][nnc] != 0:      # 빈 칸이 아니면 가면 안됨
-                return cur_r, cur_c, cur_d
-
-        # 3 칸 모두 빈 칸인 경우 ) 아래로 한 칸 내리기
-        nr = cur_r + 1
-        for dr, dc in ((1, 0), (0, -1)):
-            nnr, nnc = nr + dr, nc + dc
-            if nnr > R + 2:
-                return cur_r, cur_c, cur_d
-            if arr[nnr][nnc] != 0:
-                return cur_r, cur_c, cur_d
-
-        # 2 칸 모두 빈 칸인 경우 ) 내려갈 수 있음 -> 중앙 내리기, 출구 회전
-        cur_r, cur_c, cur_d = nr, nc, (cur_d+1) % 4
-    return -1       # 예외 처리
-
-
 def bfs(sx, sy):
     v = [[False] * (C+2) for _ in range(R+3)]
     q = deque()
@@ -115,48 +45,83 @@ def bfs(sx, sy):
 
     return -1           # 예외 처리
 
-def run(sc, sd):
-    cur_r, cur_c, cur_d = 100, sc, sd
-    while True:
-        down_r, down_c = down(cur_c)
-        if (down_r, down_c) == (cur_r, cur_c):
-            return cur_r, cur_c, cur_d
 
-        left_r, left_c, left_d = left(down_r, down_c, cur_d)
-        if (left_r, left_c, left_d) == (cur_r, cur_c, cur_d):
-            return cur_r, cur_c, cur_d
+def can_go_down(cr, cc):
+    cr, cc = cr + 1, cc
+    flag = True
+    for dr, dc in ((1, 0), (0, -1), (0, 1)):
+        nr, nc = cr + dr, cc + dc
+        if nr > R + 2:          # 범위 초과
+            flag = False
+            continue
+        if arr[nr][nc] != 0:    # 빈 칸이 아닐 때
+            flag = False
+    return flag
 
-        right_r, right_c, right_d = right(left_r, left_c, left_d)
-        if (right_r, right_c, right_d) == (cur_r, cur_c, cur_d):
-            return cur_r, cur_c, cur_d
 
-        cur_r, cur_c, cur_d = right_r, right_c, right_d
+def can_go_left(cr, cc):
+    flag = True
+    for dr, dc in ((-1, -1), (0, -2), (1, -1), (1, -2), (2, -1)):
+        nr, nc = cr + dr, cc + dc
+        if nr > R + 2 or nc < 1:
+            flag = False
+            continue
+        if arr[nr][nc] != 0:
+            flag = False
+    return flag
+
+
+def can_go_right(cr, cc):
+    flag = True
+    for dr, dc in ((-1, 1), (0, 2), (1, 1), (1, 2), (2, 1)):
+        nr, nc = cr + dr, cc + dc
+        if nr > R + 2 or nc > C:
+            flag = False
+            continue
+        if arr[nr][nc] != 0:
+            flag = False
+    return flag
+
+
+def down(sr, sc, sd):
+    # 아래로 한 칸
+    if can_go_down(sr, sc):
+        return down(sr+1, sc, sd)
+    # 왼쪽 회전 아래로 한 칸
+    elif can_go_left(sr, sc):
+        return down(sr+1, sc-1, (sd+3)%4)
+    # 오른쪽 회전 아래로 한 칸
+    elif can_go_right(sr, sc):
+        return down(sr+1, sc+1, (sd+1)%4)
+    else:       # 더 이상 움직이지 못할 때
+        return sr, sc, sd
 
 
 result = 0
 for idx, (ci, di) in enumerate(orders):
     # [1] 숲 탐색: 아래 / 왼 / 오 -> 반복
-    right_r, right_c, right_d = run(ci, di)
+
+    tr, tc, td = down(1, ci, di)
 
     # RESET 조건 ) 골렘의 몸 일부가 벗어난 상태 -> 배열 비우고, 다음 골렘으로 넘어감
-    if right_r < 4:
-        arr = [[0] * (C+2) for _ in range(R+3)]
+    if tr < 4:
+        arr = [[0] * (C + 2) for _ in range(R + 3)]
         continue
 
     # [2] 정령 이동
     # [2-1] 골렘 표시하기 / 상하좌우
-    arr[right_r][right_c] = (idx+1)
+    arr[tr][tc] = (idx + 1)
     for d in range(4):
         # 출구이면 - 붙여서 표기
-        nr, nc = right_r + dx[d], right_c + dy[d]
-        if d == right_d:
-            arr[nr][nc] = -(idx+1)
+        nr, nc = tr + dx[d], tc + dy[d]
+        if d == td:
+            arr[nr][nc] = -(idx + 1)
         else:
-            arr[nr][nc] = (idx+1)
+            arr[nr][nc] = (idx + 1)
 
     # [2-2] bfs로 가장 낮은 위치 찾기
 
-    depth = bfs(right_r, right_c)
+    depth = bfs(tr, tc)
     result += (depth - 2)
 
 print(result)
