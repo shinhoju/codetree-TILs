@@ -115,15 +115,28 @@ def bfs(sx, sy):
 
     return -1           # 예외 처리
 
+def run(sc, sd):
+    cur_r, cur_c, cur_d = 100, sc, sd
+    while True:
+        down_r, down_c = down(cur_c)
+        if (down_r, down_c) == (cur_r, cur_c):
+            return cur_r, cur_c, cur_d
 
+        left_r, left_c, left_d = left(down_r, down_c, di)
+        if (left_r, left_c, left_d) == (cur_r, cur_c, cur_d):
+            return cur_r, cur_c, cur_d
+
+        right_r, right_c, right_d = right(left_r, left_c, left_d)
+        if (right_r, right_c, right_d) == (cur_r, cur_c, cur_d):
+            return cur_r, cur_c, cur_d
+
+        cur_r, cur_c, cur_d = right_r, right_c, right_d
 
 
 result = 0
 for idx, (ci, di) in enumerate(orders):
-    # [1] 숲 탐색: 아래 / 왼 / 오
-    down_r, down_c = down(ci)
-    left_r, left_c, left_d = left(down_r, down_c, di)
-    right_r, right_c, right_d = right(left_r, left_c, left_d)
+    # [1] 숲 탐색: 아래 / 왼 / 오 -> 반복
+    right_r, right_c, right_d = run(ci, di)
 
     # RESET 조건 ) 골렘의 몸 일부가 벗어난 상태 -> 배열 비우고, 다음 골렘으로 넘어감
     if right_r < 4:
