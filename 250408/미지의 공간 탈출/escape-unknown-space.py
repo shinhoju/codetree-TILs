@@ -178,6 +178,9 @@ for sr, sc, d, v in eff:
         if nr < 0 or nr >= N or nc < 0 or nc >= N:
             break
 
+        if (nr, nc) == (ex_2d, ey_2d):
+            continue
+
         if space[nr][nc] == 1:
             break
 
