@@ -46,7 +46,7 @@ def left(r, c, d):
 
         # 3 칸 모두 빈 칸인 경우 ) 아래로 한 칸 내리기
         nr = cur_r + 1
-        for dr, dc in ((1, -1), (1, 0)):
+        for dr, dc in ((0, -1), (1, 0)):
             nnr, nnc = nr + dr, nc + dc
             if nnr > R + 2:
                 return cur_r, cur_c, cur_d
