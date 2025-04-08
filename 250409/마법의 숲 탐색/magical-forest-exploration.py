@@ -122,7 +122,7 @@ def run(sc, sd):
         if (down_r, down_c) == (cur_r, cur_c):
             return cur_r, cur_c, cur_d
 
-        left_r, left_c, left_d = left(down_r, down_c, di)
+        left_r, left_c, left_d = left(down_r, down_c, cur_d)
         if (left_r, left_c, left_d) == (cur_r, cur_c, cur_d):
             return cur_r, cur_c, cur_d
 
