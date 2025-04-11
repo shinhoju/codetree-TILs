@@ -27,6 +27,25 @@ def distance(x1, y1, x2, y2):
     return (x1-x2)**2 + (y1-y2)**2
 
 
+# def dfs(v, sx, sy, sd):
+#     nx, ny = sx + dx[sd], sy + dy[sd]
+#     ns = arr[sx][sy]
+#
+#     if in_range(nx, ny):
+#         if arr[nx][ny] > 0:
+#             v[nx][ny] = ns
+#             santa[ns] = [nx, ny]
+#             return dfs(v, nx, ny, sd)
+#         else:
+#             return v
+#
+#     else:
+#         if arr[sx][sy] > 0:
+#             dead = arr[sx][sy]
+#             santa.pop(dead)
+#         return v
+
+
 def dfs(v, sx, sy, sd):
     nx, ny = sx + dx[sd], sy + dy[sd]
     ns = arr[sx][sy]
@@ -45,6 +64,8 @@ def dfs(v, sx, sy, sd):
         return v
 
 
+
+
 def collide(sx, sy, sd, n, push):
     global arr
 
@@ -54,11 +75,12 @@ def collide(sx, sy, sd, n, push):
 
     # 밀려난 산타 위치 (narr, santa) 업데이트 / 기절 산타 업데이트
     x, y = sx + dx[sd] * n, sy + dy[sd] * n
-    if not in_range(x, y):
+    if not in_range(x, y):              # 격자 밖으로 나감
         santa.pop(push)
     else:
-        narr = [a[:] for a in arr]
-        arr = dfs(narr, x, y, sd)       # 새로운 arr로 업데이트
+        if arr[x][y] != 0:
+            narr = [a[:] for a in arr]
+            arr = dfs(narr, x, y, sd)       # 새로운 arr로 업데이트
         arr[x][y] = push
         santa[push] = [x, y]
         tset.add(push)
